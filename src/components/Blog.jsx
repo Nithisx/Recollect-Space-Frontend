@@ -38,10 +38,10 @@ const BlogPage = () => {
         if (!token) throw new Error("Authentication required");
 
         const [folderResponse, blogsResponse] = await Promise.all([
-          axios.get(`http://localhost:5003/api/folders/${folderId}`, {
+          axios.get(`http://15.235.147.39:5003/api/folders/${folderId}`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          axios.get(`http://localhost:5003/api/folders/${folderId}/blogs`, {
+          axios.get(`http://15.235.147.39:5003/api/folders/${folderId}/blogs`, {
             headers: { Authorization: `Bearer ${token}` },
           })
         ]);
@@ -70,7 +70,7 @@ const BlogPage = () => {
     try {
       const token = localStorage.getItem("authToken");
       const response = await axios.post(
-        `http://localhost:5003/api/folders/${folderId}/blog`,
+        `http://15.235.147.39:5003/api/folders/${folderId}/blog`,
         { title, content },
         { headers: { Authorization: `Bearer ${token}` } }
       );

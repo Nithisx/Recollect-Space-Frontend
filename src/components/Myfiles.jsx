@@ -66,7 +66,7 @@ export const Myfiles = () => {
 
       // 1) Owned folders
       const ownedRes = await axios.get(
-        `http://localhost:5003/api/folders/user/${userId}`,
+        `http://15.235.147.39:5003/api/folders/user/${userId}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -74,7 +74,7 @@ export const Myfiles = () => {
 
       // 2) Folders shared with me
       const sharedRes = await axios.get(
-        `http://localhost:5003/api/folders/shared`,
+        `http://15.235.147.39:5003/api/folders/shared`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -123,7 +123,7 @@ export const Myfiles = () => {
       }
 
       const response = await axios.post(
-        'http://localhost:5003/api/folders/create-folder',
+        'http://15.235.147.39:5003/api/folders/create-folder',
         {
           name: folderName.trim(),
           section: 'memory',
@@ -162,7 +162,7 @@ export const Myfiles = () => {
         throw new Error('No authentication token found');
       }
 
-      await axios.delete(`http://localhost:5003/api/folders/${folderId}`, {
+      await axios.delete(`http://15.235.147.39:5003/api/folders/${folderId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -398,7 +398,7 @@ export const Myfiles = () => {
         }
 
         const response = await axios.post(
-          `http://localhost:5003/api/folders/${folderId}/share`,
+          `http://15.235.147.39:5003/api/folders/${folderId}/share`,
           { email, permission },
           { headers: { Authorization: `Bearer ${token}` } }
         );
