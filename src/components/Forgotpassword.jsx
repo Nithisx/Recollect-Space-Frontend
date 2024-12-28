@@ -23,7 +23,7 @@ const ForgotPassword = () => {
         }
 
         try {
-            await axios.post('http://15.235.147.39:5003/api/auth/forgot-password', { email });
+            await axios.post('https://15.235.147.39:5003/api/auth/forgot-password', { email });
             setSuccess('OTP has been sent to your email');
             setStep(2);
         } catch (error) {
@@ -51,7 +51,7 @@ const ForgotPassword = () => {
         }
 
         try {
-            await axios.post('http://15.235.147.39:5003/api/auth/reset-password', {
+            await axios.post('https://15.235.147.39:5003/api/auth/reset-password', {
                 email,
                 resetToken: parseInt(otp),
                 newPassword

@@ -19,7 +19,7 @@ const VerifyOTP = () => {
         }
 
         try {
-            await axios.post('http://15.235.147.39:5003/api/auth/verify-otp', { email, otp });
+            await axios.post('https://15.235.147.39:5003/api/auth/verify-otp', { email, otp });
             alert('Account verified successfully! You can now log in.');
 
             navigate('/auth');
