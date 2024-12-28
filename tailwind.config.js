@@ -1,12 +1,12 @@
-module.exports = {
+export default {
   content: [
-    "./index.html",  // Make sure this file path is correct
-    "./src/**/*.{js,ts,jsx,tsx}",  // Ensure this covers all your React components
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
     extend: {
       fontFamily: {
-        poppins: ['Poppins', 'system-ui'],  // Corrected font-family name
+        poppins: ['Poppins', 'system-ui'],
       },
       colors: {
         indigo: {
@@ -19,8 +19,8 @@ module.exports = {
           600: '#3b4aff',
           700: '#2633ff',
           800: '#1c2cff',
-          900: '#1725ff'
-        }
+          900: '#1725ff',
+        },
       },
       animation: {
         'fade-in-down': 'fadeInDown 0.5s ease-out',
@@ -29,12 +29,12 @@ module.exports = {
         fadeInDown: {
           '0%': { opacity: '0', transform: 'translateY(-20px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
-        }
+        },
       },
       boxShadow: {
         'custom': '0 10px 30px rgba(0, 0, 0, 0.05)',
-      }
-    }
+      },
+    },
   },
   plugins: [],
-}
+};
