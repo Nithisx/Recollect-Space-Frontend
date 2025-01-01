@@ -12,7 +12,7 @@ import {
   GlobeIcon
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';  
-import ProductComparison from './productcomparison';  
+import ProductComparison from './Productcomparison';  
 // Import images
 import image1 from '../assets/3.jpg';
 import image2 from '../assets/4.jpg';
