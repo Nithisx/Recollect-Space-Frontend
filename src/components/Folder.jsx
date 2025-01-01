@@ -19,6 +19,8 @@ const FolderPage = () => {
     const [isSuccessPopupOpen, setIsSuccessPopupOpen] = useState(false);
     const [isDragging, setIsDragging] = useState(false);
     const navigate = useNavigate();
+    const [uploadProgress, setUploadProgress] = useState(0);
+
 
     useEffect(() => {
         const fetchFolder = async () => {
@@ -28,7 +30,7 @@ const FolderPage = () => {
                     throw new Error('No token found');
                 }
 
-                const response = await axios.get(`https://15.235.147.39:5003/api/folders/${folderId}`, {
+                const response = await axios.get(`http://localhost:3000/api/folders/${folderId}`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
@@ -56,47 +58,61 @@ const FolderPage = () => {
             setIsModalOpen(true);
             return;
         }
-
+    
         const formData = new FormData();
         files.forEach(file => {
             formData.append('photos', file);
         });
-
+    
         try {
             const token = localStorage.getItem('authToken');
             if (!token) {
                 throw new Error('No token found');
             }
-
-            await axios.post(`https://15.235.147.39:5003/api/folders/${folderId}/upload`, formData, {
+    
+            // Start the upload request and track progress
+            await axios.post(`http://localhost:3000/api/folders/${folderId}/upload`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                     Authorization: `Bearer ${token}`,
                 },
+                onUploadProgress: (progressEvent) => {
+                    if (progressEvent.total) {
+                        const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+                        setUploadProgress(progress); // Update the progress state
+                    }
+                }
             });
-
-            const response = await axios.get(`https://15.235.147.39:5003/api/folders/${folderId}`, {
+    
+            // Fetch updated folder details after upload
+            const response = await axios.get(`http://localhost:3000/api/folders/${folderId}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
             });
-
+    
             const updatedFolder = response.data.folder;
             setPhotos(updatedFolder?.photos || []);
             setModalMessage('Photos uploaded successfully!');
             setIsModalOpen(true);
-
+    
+            // Hide progress bar and reset progress
+            setUploadProgress(0); // Reset progress to hide the progress bar
+    
             setIsSuccessPopupOpen(true);
             setTimeout(() => setIsSuccessPopupOpen(false), 3000);
-
-            setFiles([]);
-            setIsUploadModalOpen(false);
+    
+            setFiles([]); // Clear the selected files
+            setIsUploadModalOpen(false); // Close the upload modal
         } catch (error) {
             console.error(error);
             setModalMessage('Error uploading files.');
             setIsModalOpen(true);
+            setUploadProgress(0); // Reset progress on error as well
         }
     };
+    
+    
 
     const handleAddBlockClick = () => {
         navigate(`/folders/${folderId}/blog`);
@@ -290,32 +306,54 @@ const FolderPage = () => {
 
             {/* Upload Photos Modal */}
             {isUploadModalOpen && (
-                <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-                    <div className="bg-white rounded-xl shadow-lg w-full max-w-lg p-8">
-                        <h2 className="text-2xl font-semibold text-gray-800 mb-6">Upload Photos</h2>
-                        <input
-                            type="file"
-                            onChange={handleFileChange}
-                            multiple
-                            className="mb-4 border border-gray-300 rounded-lg px-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+    <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-40 transition-opacity duration-300 opacity-100">
+        <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg p-8 transform transition-all duration-300 scale-100 hover:scale-105">
+            <h2 className="text-3xl font-semibold text-gray-900 mb-6">Upload Photos</h2>
+
+            {/* File Input with custom styling */}
+            <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-600 mb-2">Select files to upload</label>
+                <input
+                    type="file"
+                    onChange={handleFileChange}
+                    multiple
+                    className="block w-full text-sm text-gray-700 file:py-4 file:px-6 file:rounded-lg file:border file:border-gray-300 file:bg-gray-100 file:text-gray-800 hover:file:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                />
+            </div>
+
+            {/* Upload Progress Bar */}
+            {uploadProgress > 0 && uploadProgress < 100 && (
+                <div className="mt-6">
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                        <div
+                            className="h-full bg-gradient-to-r from-blue-400 to-blue-600 rounded-full transition-all duration-300"
+                            style={{ width: `${uploadProgress}%` }}
                         />
-                        <div className="flex justify-end space-x-4">
-                            <button
-                                onClick={handleUpload}
-                                className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition duration-200 transform hover:-translate-y-1"
-                            >
-                                Confirm Upload
-                            </button>
-                            <button
-                                onClick={closeUploadModal}
-                                className="bg-gray-300 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-400 transition duration-200 transform hover:-translate-y-1"
-                            >
-                                Cancel
-                            </button>
-                        </div>
                     </div>
+                    <p className="mt-2 text-center text-sm text-gray-600">{uploadProgress}%</p>
                 </div>
             )}
+
+            {/* Modal Actions */}
+            <div className="flex justify-end space-x-4 mt-8">
+                <button
+                    onClick={handleUpload}
+                    className="bg-gradient-to-r from-blue-600 to-blue-800 text-white px-6 py-3 rounded-lg shadow-lg hover:bg-gradient-to-l hover:from-blue-700 hover:to-blue-900 transform transition-all duration-300"
+                >
+                    Upload
+                </button>
+                <button
+                    onClick={closeUploadModal}
+                    className="bg-gray-300 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-400 transform transition-all duration-200"
+                >
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+)}
+
+
 
             {/* Modal for displaying messages */}
             {isModalOpen && (

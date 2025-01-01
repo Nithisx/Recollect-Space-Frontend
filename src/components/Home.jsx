@@ -1,4 +1,6 @@
 import React from 'react';
+import { motion } from 'framer-motion';
+
 import { 
   HeartIcon, 
   CameraIcon, 
@@ -9,8 +11,8 @@ import {
   CheckIcon,
   GlobeIcon
 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';  // Ensure this is imported properly
-
+import { useNavigate } from 'react-router-dom';  
+import ProductComparison from './productcomparison';  
 // Import images
 import image1 from '../assets/3.jpg';
 import image2 from '../assets/4.jpg';
@@ -21,7 +23,7 @@ import image6 from '../assets/8.jpg';
 import image7 from '../assets/9.jpeg';
 import image8 from '../assets/10.jpg';
 import Header from './Header';
-
+import Footer from './Footer';
 const featureImages = [image1, image2, image3, image4, image5, image6, image7, image8];
 
 const Home = () => {
@@ -30,7 +32,7 @@ const Home = () => {
 
   // Function to handle navigation
   const handleNavigate = () => {
-    navigate('/myfiles');  // Navigate to the '/myfiles' page
+    navigate('/myfiles');  
   };
 
   return (
@@ -46,15 +48,14 @@ const Home = () => {
             </div>
 
             <h1 className="text-6xl font-extrabold text-gray-900 mb-8 leading-tight max-w-4xl mx-auto">
-              Memories Reimagined: 
+            AI-Secured Memories
               <span className="block text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-indigo-500">
-                Your Digital Time Capsule
+              Your Digital Memory Vault
               </span>
             </h1>
 
             <p className="text-xl text-gray-700 max-w-3xl mx-auto mb-10 leading-relaxed">
-              More than just storage, we're creating a sanctuary for your most treasured moments. 
-              A platform where memories are not just saved, but celebrated and protected.
+            More than just storage, we’re creating a safe space for your most cherished memories—where AI helps organize, preserve, and protect your moments.
             </p>
 
             <div className="flex justify-center space-x-4">
@@ -66,7 +67,7 @@ const Home = () => {
               </button>
               <button
                 className="bg-white text-gray-800 px-10 py-4 rounded-xl font-bold border border-gray-200 hover:bg-gray-100 transition-colors shadow-custom"
-                onClick={handleNavigate}  // Ensure the button triggers handleNavigate
+                onClick={()=>navigate('./aboutus')}  // Ensure the button triggers handleNavigate
               >
                 Learn More
               </button>
@@ -78,19 +79,19 @@ const Home = () => {
             {[{
               icon: <FolderIcon className="w-12 h-12 text-indigo-500" />,
               title: "Smart Organization",
-              description: "AI-powered folder creation and intelligent tagging.",
+              description: "AI-powered folder creation and smart organization.",
               image: featureImages[0]
             },
             {
               icon: <LockIcon className="w-12 h-12 text-green-500" />,
-              title: "Ironclad Security",
-              description: "Enterprise-grade encryption for absolute peace of mind.",
+              title: "Strong, Unbreakable Security",
+              description: "Top-level encryption for complete peace of mind.",
               image: featureImages[1]
             },
             {
               icon: <ShareIcon className="w-12 h-12 text-indigo-500" />,
-              title: "Seamless Sharing",
-              description: "Share memories with granular privacy controls.",
+              title: "Effortless Sharing",
+              description: "Share memories with full privacy control",
               image: featureImages[2]
             }].map((feature, index) => (
               <div 
@@ -137,13 +138,12 @@ const Home = () => {
                   </h2>
                 </div>
                 <p className="text-gray-700 text-lg leading-relaxed mb-4">
-                  We're reimagining digital memory preservation. Every pixel tells a story, every moment matters.
-                </p>
+                We're transforming digital memory preservation. Every pixel tells a story, every moment counts.                </p>
                 <ul className="space-y-3">
                   {[
-                    "Intuitive Memory Management",
-                    "Cutting-Edge Security",
-                    "Emotional Connection Preservation"
+                    "Easy Memory Management",
+                    "Advanced Security",
+                    "Keeping Emotional Connections"
                   ].map((item, index) => (
                     <li key={index} className="flex items-center space-x-3">
                       <CheckIcon className="text-green-500" size={20} />
@@ -155,26 +155,13 @@ const Home = () => {
             </div>
           </div>
 
-          {/* Final Call to Action */}
-          <div className="bg-gradient-to-r from-indigo-600 to-indigo-500 text-white rounded-3xl p-16 text-center shadow-custom">
-            <GlobeIcon className="w-24 h-24 mx-auto mb-8 text-white/20" />
-            <h2 className="text-5xl font-bold mb-6">
-              Your Memories, Your Legacy
-            </h2>
-            <p className="text-2xl mb-10 max-w-3xl mx-auto opacity-90">
-              Join a community dedicated to preserving life's most beautiful moments with intelligence and care.
-            </p>
-            <div className="flex justify-center space-x-4">
-              <button className="bg-white text-gray-900 px-12 py-4 rounded-xl font-bold text-lg hover:bg-gray-100 transition-colors shadow-custom">
-                Get Started Free
-              </button>
-              <button className="bg-transparent border-2 border-white text-white px-12 py-4 rounded-xl font-bold text-lg hover:bg-white/20 transition-colors">
-                Watch Demo
-              </button>
-            </div>
-          </div>
+          <ProductComparison/>
+
+          {/* Features Section */}
+      
         </div>
       </div>
+      <Footer />
     </>
   );
 };

@@ -16,7 +16,7 @@ const Header = () => {
               to="/" 
               className="text-2xl font-bold text-gray-800 hover:text-blue-600 transform hover:scale-105 transition-all duration-300"
             >
-              Memory Keeper
+              Recollect Space
             </Link>
           </div>
 

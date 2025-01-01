@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import Header from './Header';
 import image7 from '../assets/9.jpeg';
 import image8 from '../assets/10.jpg';
+import { FaEye, FaEyeSlash } from 'react-icons/fa'; // Import the FontAwesome icons
+
 
 const Toast = ({ message, onClose }) => {
     useEffect(() => {
@@ -28,10 +30,10 @@ const Login = () => {
     const [errorMessage, setErrorMessage] = useState('');
     const [user, setUser] = useState(null);
     const [showOTPPopup, setShowOTPPopup] = useState(false);
+    const [isPasswordVisible, setIsPasswordVisible] = useState(false);
     const [otp, setOtp] = useState('');
     const [tempCredentials, setTempCredentials] = useState(null);
     const [toast, setToast] = useState({ show: false, message: '' });
-    
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -40,6 +42,10 @@ const Login = () => {
             setUser(JSON.parse(storedUser));
         }
     }, []);
+
+    const togglePasswordVisibility = () => {
+        setIsPasswordVisible(!isPasswordVisible);
+      };
 
     const showSignup = () => {
         setIsLoginVisible(false);
@@ -57,7 +63,7 @@ const Login = () => {
 
     const performLogin = async (credentials) => {
         try {
-            const response = await axios.post('https://15.235.147.39:5003/api/auth/login', credentials);
+            const response = await axios.post('http://localhost:3000/api/auth/login', credentials);
             const loggedInUser = response.data.user;
             const token = response.data.token;
 
@@ -81,7 +87,7 @@ const Login = () => {
         }
 
         try {
-            await axios.post('https://15.235.147.39:5003/api/auth/verify-otp', { 
+            await axios.post('http://localhost:3000/api/auth/verify-otp', { 
                 email: tempCredentials.email, 
                 otp 
             });
@@ -107,7 +113,7 @@ const Login = () => {
         try {
             if (!isLoginVisible) {
                 setTempCredentials({ email, password });
-                await axios.post('https://15.235.147.39:5003/api/auth/send-otp', { email, password });
+                await axios.post('http://localhost:3000/api/auth/send-otp', { email, password });
                 setShowOTPPopup(true);
             } else {
                 await performLogin({ email, password });
@@ -260,15 +266,27 @@ const Login = () => {
                                     onChange={(e) => setEmail(e.target.value)}
                                 />
                             </div>
-                            <div className="mb-3">
-                                <input
-                                    type="password"
-                                    className="w-full p-2 border border-gray-300 rounded focus:outline-none"
-                                    placeholder="Enter Your Password"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                />
-                            </div>
+                            <div className="mb-3 relative">
+      <input
+        type={isPasswordVisible ? 'text' : 'password'} // Toggle between text and password
+        className="w-full p-2 border border-gray-300 rounded focus:outline-none pr-10"
+        placeholder="Enter Your Password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+      />
+      {/* Eye Icon button */}
+      <button
+        type="button"
+        className="absolute top-2 right-2 text-gray-500"
+        onClick={togglePasswordVisibility}
+      >
+        {isPasswordVisible ? (
+          <FaEyeSlash className="w-5 h-5" /> // Eye with slash (password hidden)
+        ) : (
+          <FaEye className="w-5 h-5" /> // Eye without slash (password visible)
+        )}
+      </button>
+    </div>
                             <div className="flex items-center justify-between">
                             <a href="/forgot-password" className="text-sm text-blue-500">Forgot Password?</a>
                                 <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded shadow hover:bg-blue-700 transition">
@@ -300,14 +318,27 @@ const Login = () => {
                                     onChange={(e) => setEmail(e.target.value)}
                                 />
                             </div>
-                            <div className="mb-3">
-                                <input
-                                    type="password"
-                                    className="w-full p-2 border border-gray-300 rounded focus:outline-none"
-                                    placeholder="Enter Your Password"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                />
+                            <div className="mb-3 relative">
+                            <input
+                                type={isPasswordVisible ? 'text' : 'password'} // Toggle between text and password
+                                className="w-full p-2 border border-gray-300 rounded focus:outline-none pr-10"
+                                placeholder="Enter Your Password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                            />
+                            
+                            {/* Eye Icon button */}
+                            <button
+                                type="button"
+                                className="absolute top-2 right-2 text-gray-500"
+                                onClick={togglePasswordVisibility}
+                            >
+                                {isPasswordVisible ? (
+                                <FaEyeSlash className="w-5 h-5" /> // Eye with slash (password hidden)
+                                ) : (
+                                <FaEye className="w-5 h-5" /> // Eye without slash (password visible)
+                                )}
+                            </button>
                             </div>
                             <div className="flex items-center justify-between">
                                 <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded shadow hover:bg-blue-700 transition">
