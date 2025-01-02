@@ -30,7 +30,7 @@ const FolderPage = () => {
                     throw new Error('No token found');
                 }
 
-                const response = await axios.get(`http://localhost:3000/api/folders/${folderId}`, {
+                const response = await axios.get(`http://15.235.147.39:3000/api/folders/${folderId}`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
@@ -71,7 +71,7 @@ const FolderPage = () => {
             }
     
             // Start the upload request and track progress
-            await axios.post(`http://localhost:3000/api/folders/${folderId}/upload`, formData, {
+            await axios.post(`http://15.235.147.39:3000/api/folders/${folderId}/upload`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                     Authorization: `Bearer ${token}`,
@@ -85,7 +85,7 @@ const FolderPage = () => {
             });
     
             // Fetch updated folder details after upload
-            const response = await axios.get(`http://localhost:3000/api/folders/${folderId}`, {
+            const response = await axios.get(`http://15.235.147.39:3000/api/folders/${folderId}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
