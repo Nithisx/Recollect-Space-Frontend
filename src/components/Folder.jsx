@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import Header from "./Header";
 import Modal from "./Modal";
+import Face from "./Face";
 import { PlusCircleIcon, ArrowUpTrayIcon, Squares2X2Icon, ListBulletIcon, XMarkIcon, ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/solid';
 
 const FolderPage = () => {
@@ -30,7 +31,7 @@ const FolderPage = () => {
                     throw new Error('No token found');
                 }
 
-                const response = await axios.get(`http://15.235.147.39:3000/api/folders/${folderId}`, {
+                const response = await axios.get(`https://recollect.lokeshdev.co:3000/api/folders/${folderId}`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
@@ -71,7 +72,7 @@ const FolderPage = () => {
             }
     
             // Start the upload request and track progress
-            await axios.post(`http://15.235.147.39:3000/api/folders/${folderId}/upload`, formData, {
+            await axios.post(`https://recollect.lokeshdev.co:3000/api/folders/${folderId}/upload`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                     Authorization: `Bearer ${token}`,
@@ -85,7 +86,7 @@ const FolderPage = () => {
             });
     
             // Fetch updated folder details after upload
-            const response = await axios.get(`http://15.235.147.39:3000/api/folders/${folderId}`, {
+            const response = await axios.get(`https://recollect.lokeshdev.co:3000/api/folders/${folderId}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -173,6 +174,8 @@ const FolderPage = () => {
     };
 
     return (
+        <>
+        
         <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
             <Header />
             <div className="container mx-auto px-4 py-8">
@@ -360,6 +363,8 @@ const FolderPage = () => {
                 <Modal message={modalMessage} onClose={closeModal} />
             )}
         </div>
+        <Face folderId={folderId} />
+        </>
     );
 };
 
