@@ -23,7 +23,7 @@ const ForgotPassword = () => {
         }
 
         try {
-            await axios.post('https://recollect.lokeshdev.co:3000/api/auth/forgot-password', { email });
+            await axios.post('http://localhost:3000/api/auth/forgot-password', { email });
             setSuccess('OTP has been sent to your email');
             setStep(2);
         } catch (error) {
@@ -51,7 +51,7 @@ const ForgotPassword = () => {
         }
 
         try {
-            await axios.post('https://recollect.lokeshdev.co:3000/api/auth/reset-password', {
+            await axios.post('http://localhost:3000/api/auth/reset-password', {
                 email,
                 resetToken: parseInt(otp),
                 newPassword

@@ -1,7 +1,10 @@
+// src/components/FaceFinder.jsx
+
 import React, { useState, useRef, useEffect } from 'react';
 import * as faceapi from 'face-api.js';
 import axios from 'axios';
 import { Plus } from 'lucide-react';
+import { clientEncrypt } from '../utils/encryption'; // Correct import
 
 const FaceFinder = ({ folderId }) => {
   const [selectedImage, setSelectedImage] = useState(null);
@@ -80,10 +83,10 @@ const FaceFinder = ({ folderId }) => {
 
   const handleUpload = async () => {
     if (!file || !modelLoaded) return;
-    
+
     setLoading(true);
     setError(null);
-    setProgress(50);
+    setProgress(25);
 
     try {
       const token = localStorage.getItem('authToken');
@@ -91,25 +94,30 @@ const FaceFinder = ({ folderId }) => {
         throw new Error('Please log in to use this feature');
       }
 
+      // 1. Compute the face descriptor on the original image
+      setProgress(40);
       const img = await faceapi.bufferToImage(file);
-      setProgress(65);
-      
       const descriptor = await getFaceDescriptor(img);
+      setProgress(60);
+
+      // 2. Encrypt the image
+      const encryptedFile = await clientEncrypt(file);
       setProgress(80);
 
+      // 3. Prepare formData with encrypted image and descriptor
       const formData = new FormData();
-      formData.append('image', file);
+      formData.append('image', encryptedFile); // Upload encrypted image
       formData.append('folderId', folderId);
       formData.append('descriptor', JSON.stringify(Array.from(descriptor)));
 
       const response = await axios.post(
-        'https://recollect.lokeshdev.co:3000/api/photos/find-similar', 
+        'http://localhost:3000/api/photos/find-similar',
         formData,
         {
           headers: {
             'Content-Type': 'multipart/form-data',
-            'Authorization': `Bearer ${token}`
-          }
+            'Authorization': `Bearer ${token}`,
+          },
         }
       );
 
@@ -119,9 +127,8 @@ const FaceFinder = ({ folderId }) => {
         setError('No similar faces found');
         setSimilarPhotos([]);
       }
-      
-      setProgress(100);
 
+      setProgress(100);
     } catch (error) {
       console.error('Error finding similar faces:', error);
       setError(error.response?.data?.message || error.message || 'Error processing image');
