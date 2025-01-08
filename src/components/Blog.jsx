@@ -1,3 +1,5 @@
+// src/components/BlogPage.jsx
+
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import axios from "axios";
@@ -10,6 +12,10 @@ import {
   XMarkIcon
 } from '@heroicons/react/24/outline';
 import Header from "./Header";
+import { 
+  clientEncryptText, 
+  clientDecryptText 
+} from '../utils/encryption'; // Import encryption functions
 
 const BlogPage = () => {
   const { folderId } = useParams();
@@ -21,6 +27,7 @@ const BlogPage = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [modalMode, setModalMode] = useState(null);
+  const [isSaveSuccess, setIsSaveSuccess] = useState(false); // State to control success message visibility
 
   // Update document title effect
   useEffect(() => {
@@ -47,7 +54,20 @@ const BlogPage = () => {
         ]);
 
         setFolderName(folderResponse.data.folder.name);
-        setBlogs(blogsResponse.data);
+
+        // Decrypt blogs
+        const decryptedBlogs = await Promise.all(blogsResponse.data.map(async blog => {
+          const decryptedTitle = await clientDecryptText(blog.title);
+          const decryptedContent = await clientDecryptText(blog.content);
+
+          return {
+            ...blog,
+            title: decryptedTitle,
+            content: decryptedContent
+          };
+        }));
+
+        setBlogs(decryptedBlogs);
       } catch (error) {
         setErrorMessage("Unable to load folder or blogs. Please try again.");
         console.error(error);
@@ -69,20 +89,47 @@ const BlogPage = () => {
 
     try {
       const token = localStorage.getItem("authToken");
+      if (!token) throw new Error("Authentication required");
+
+      // Encrypt title and content
+      setIsLoading(true);
+      setErrorMessage("");
+
+      const encryptedTitle = await clientEncryptText(title);
+      const encryptedContent = await clientEncryptText(content);
+
+      // Send encrypted data to server
       const response = await axios.post(
-        `http://localhost:3000/api/folders/${folderId}/blog`,
-        { title, content },
+        `http://localhost:3000/api/folders/${folderId}/blogs`,
+        { title: encryptedTitle, content: encryptedContent },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      setBlogs([response.data.blog, ...blogs]);
+      // Decrypt the newly created blog
+      const decryptedTitle = await clientDecryptText(response.data.blog.title);
+      const decryptedContent = await clientDecryptText(response.data.blog.content);
+
+      setBlogs([{
+        ...response.data.blog,
+        title: decryptedTitle,
+        content: decryptedContent
+      }, ...blogs]);
+
       setTitle("");
       setContent("");
       setModalMode(null);
-      setErrorMessage("");
+
+      // Show success message and refresh page after 3 seconds
+      setIsSaveSuccess(true);
+      setTimeout(() => {
+        setIsSaveSuccess(false);
+        window.location.reload();
+      }, 3000);
     } catch (error) {
       setErrorMessage("Failed to save blog. Please try again.");
       console.error(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -91,7 +138,7 @@ const BlogPage = () => {
 
     return (
       <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4 overflow-y-auto">
-        <div className="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto relative">
+        <div className="bg-white rounded-2xl shadow-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto relative">
           <button 
             onClick={() => setSelectedBlog(null)}
             className="absolute top-4 right-4 bg-gray-100 p-2 rounded-full hover:bg-gray-200 transition-colors z-10"
@@ -177,6 +224,7 @@ const BlogPage = () => {
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Enter a descriptive title"
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                required
               />
             </div>
 
@@ -191,6 +239,7 @@ const BlogPage = () => {
                 placeholder="Write your blog entry here..."
                 rows={6}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                required
               />
             </div>
 
@@ -205,8 +254,9 @@ const BlogPage = () => {
               <button 
                 type="submit"
                 className="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+                disabled={isLoading}
               >
-                Publish Blog
+                {isLoading ? 'Publishing...' : 'Publish Blog'}
               </button>
             </div>
           </form>
@@ -259,58 +309,63 @@ const BlogPage = () => {
 
   return (
     <>
-    <Header/>
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto ">
-        {/* Animated Header with Enhanced Visibility */}
-        <header className="text-center mb-12 ">
-          <div className="inline-block bg-gradient-to-r from-indigo-600 to-purple-600 text-transparent bg-clip-text mb-4">
-            <h1 className="text-5xl md:text-6xl font-extrabold text-transparent bg-clip-text mb-4 flex items-center justify-center">
-    <BookOpenIcon className="w-12 h-12 mt-auto mr-4 text-indigo-600" />
-    <span>{folderName}</span> Blogs
-  </h1>
-
-
+      <Header/>
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          {/* Animated Header with Enhanced Visibility */}
+          <header className="text-center mb-12">
+            <div className="inline-block bg-gradient-to-r from-indigo-600 to-purple-600 text-transparent bg-clip-text mb-4">
+              <h1 className="text-5xl md:text-6xl font-extrabold text-transparent bg-clip-text mb-4 flex items-center justify-center">
+                <BookOpenIcon className="w-12 h-12 mt-auto mr-4 text-indigo-600" />
+                <span>{folderName}</span> Blogs
+              </h1>
+            </div>
+            <p className="text-gray-600 max-w-2xl mx-auto text-lg">
+              Dive into a world of thoughts, ideas, and stories curated in this unique blog folder.
+            </p>
+          </header>
+            
+          <div className="flex justify-center mb-8">
+            <button 
+              onClick={() => setModalMode('create')}
+              className="flex items-center px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-full hover:from-indigo-700 hover:to-purple-700 transition-all transform hover:scale-105 shadow-lg"
+            >
+              <PlusIcon className="w-6 h-6 mr-2" />
+              Create New Blog
+            </button>
           </div>
-          <p className="text-gray-600 max-w-2xl mx-auto text-lg ">
-            Dive into a world of thoughts, ideas, and stories curated in this unique blog folder.
-          </p>
-        </header>
-          
-        <div className="flex justify-center mb-8">
-          <button 
-            onClick={() => setModalMode('create')}
-            className="flex items-center px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-full hover:from-indigo-700 hover:to-purple-700 transition-all transform hover:scale-105 shadow-lg"
-          >
-            <PlusIcon className="w-6 h-6 mr-2" />
-            Create New Blog
-          </button>
+
+          {/* Success message animation */}
+          {isSaveSuccess && (
+            <div className="fixed top-0 right-0 m-8 bg-green-500 text-white p-4 rounded-lg shadow-lg transition-transform transform scale-100 animate__animated animate__fadeIn animate__delay-1s">
+              Blog saved successfully!
+            </div>
+          )}
+
+          {isLoading ? (
+            <div className="text-center text-gray-600">
+              <svg className="animate-spin h-10 w-10 mx-auto text-indigo-600" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              <p className="mt-4 text-lg">Loading blogs...</p>
+            </div>
+          ) : blogs.length === 0 ? (
+            <div className="text-center text-gray-600 py-12 bg-white rounded-xl shadow-md">
+              <BookOpenIcon className="w-20 h-20 mx-auto text-indigo-500 mb-4" />
+              <p className="text-2xl">No blogs in this folder yet</p>
+              <p className="text-gray-500 mt-2">Start your writing journey by creating a new blog!</p>
+            </div>
+          ) : (
+            <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {blogs.map(renderBlogCard)}
+            </div>
+          )}
         </div>
 
-        {isLoading ? (
-          <div className="text-center text-gray-600">
-            <svg className="animate-spin h-10 w-10 mx-auto text-indigo-600" viewBox="0 0 24 24">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-            <p className="mt-4 text-lg">Loading blogs...</p>
-          </div>
-        ) : blogs.length === 0 ? (
-          <div className="text-center text-gray-600 py-12 bg-white rounded-xl shadow-md">
-            <BookOpenIcon className="w-20 h-20 mx-auto text-indigo-500 mb-4" />
-            <p className="text-2xl">No blogs in this folder yet</p>
-            <p className="text-gray-500 mt-2">Start your writing journey by creating a new blog!</p>
-          </div>
-        ) : (
-          <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {blogs.map(renderBlogCard)}
-          </div>
-        )}
+        {renderModal()}
+        {renderBlogDetailModal()}
       </div>
-
-      {renderModal()}
-      {renderBlogDetailModal()}
-    </div>
     </>
   );
 };
