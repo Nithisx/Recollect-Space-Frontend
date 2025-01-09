@@ -4,7 +4,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import * as faceapi from 'face-api.js';
 import axios from 'axios';
 import { Plus } from 'lucide-react';
-import { clientEncrypt } from '../utils/encryption'; // Correct import
+import { clientEncrypt } from '../utils/Encryption'; // Correct import
 
 const FaceFinder = ({ folderId }) => {
   const [selectedImage, setSelectedImage] = useState(null);
