@@ -15,7 +15,7 @@ import Header from "./Header";
 import { 
   clientEncryptText, 
   clientDecryptText 
-} from '../utils/encryption'; // Import encryption functions
+} from '../utils/Encryption'; // Import encryption functions
 
 const BlogPage = () => {
   const { folderId } = useParams();
