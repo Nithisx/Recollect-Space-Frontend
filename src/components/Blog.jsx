@@ -45,10 +45,10 @@ const BlogPage = () => {
         if (!token) throw new Error("Authentication required");
 
         const [folderResponse, blogsResponse] = await Promise.all([
-          axios.get(`http://localhost:3000/api/folders/${folderId}`, {
+          axios.get(`https://recollect.lokeshdev.co/api/folders/${folderId}`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          axios.get(`http://localhost:3000/api/folders/${folderId}/blogs`, {
+          axios.get(`https://recollect.lokeshdev.co/api/folders/${folderId}/blogs`, {
             headers: { Authorization: `Bearer ${token}` },
           })
         ]);
@@ -100,7 +100,7 @@ const BlogPage = () => {
 
       // Send encrypted data to server
       const response = await axios.post(
-        `http://localhost:3000/api/folders/${folderId}/blogs`,
+        `https://recollect.lokeshdev.co/api/folders/${folderId}/blogs`,
         { title: encryptedTitle, content: encryptedContent },
         { headers: { Authorization: `Bearer ${token}` } }
       );

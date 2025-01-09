@@ -111,7 +111,7 @@ const FaceFinder = ({ folderId }) => {
       formData.append('descriptor', JSON.stringify(Array.from(descriptor)));
 
       const response = await axios.post(
-        'http://localhost:3000/api/photos/find-similar',
+        'https://recollect.lokeshdev.co/api/photos/find-similar',
         formData,
         {
           headers: {

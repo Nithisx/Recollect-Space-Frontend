@@ -52,7 +52,7 @@ const FolderPage = () => {
           throw new Error('No token found');
         }
 
-        const response = await axios.get(`http://localhost:3000/api/folders/${folderId}`, {
+        const response = await axios.get(`https://recollect.lokeshdev.co/api/folders/${folderId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -130,7 +130,7 @@ const FolderPage = () => {
       }
 
       // Upload the encrypted files
-      await axios.post(`http://localhost:3000/api/folders/${folderId}/upload`, formData, {
+      await axios.post(`https://recollect.lokeshdev.co/api/folders/${folderId}/upload`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${token}`,

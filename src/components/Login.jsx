@@ -63,7 +63,7 @@ const Login = () => {
 
     const performLogin = async (credentials) => {
         try {
-            const response = await axios.post('http://localhost:3000/api/auth/login', credentials);
+            const response = await axios.post('https://recollect.lokeshdev.co/api/auth/login', credentials);
             const loggedInUser = response.data.user;
             const token = response.data.token;
 
@@ -87,7 +87,7 @@ const Login = () => {
         }
 
         try {
-            await axios.post('http://localhost:3000/api/auth/verify-otp', { 
+            await axios.post('https://recollect.lokeshdev.co/api/auth/verify-otp', { 
                 email: tempCredentials.email, 
                 otp 
             });
@@ -113,7 +113,7 @@ const Login = () => {
         try {
             if (!isLoginVisible) {
                 setTempCredentials({ email, password });
-                await axios.post('http://localhost:3000/api/auth/send-otp', { email, password });
+                await axios.post('https://recollect.lokeshdev.co/api/auth/send-otp', { email, password });
                 setShowOTPPopup(true);
             } else {
                 await performLogin({ email, password });
