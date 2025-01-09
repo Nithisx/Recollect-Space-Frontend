@@ -264,40 +264,45 @@ const FaceFinder = ({ folderId }) => {
                 </div>
               )}
 
-              {/* Similar Photos Grid */}
-              {!loading && similarPhotos.length > 0 && (
-                <div>
-                  <h3 className="text-lg font-semibold mb-4">Similar Photos Found</h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {similarPhotos.map((photo) => (
-                      <div 
-                        key={photo._id} 
-                        className="border rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow"
-                      >
-                        <img
-                          src={photo.data}
-                          alt={photo.name || "Similar face"}
-                          className="w-full h-48 object-cover"
-                          loading="lazy"
-                        />
-                        <div className="p-3">
-                          <div className="flex justify-between items-center">
-                            <span className="text-sm font-medium">Similarity</span>
-                            <span className="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded">
-                              {photo.similarity.toFixed(2)}%
-                            </span>
-                          </div>
-                          {photo.name && (
-                            <div className="text-sm text-gray-600 mt-1">
-                              {photo.name}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+{!loading && similarPhotos.length > 0 && (
+  <div>
+    <h3 className="text-lg font-semibold mb-4">Similar Photos Found</h3>
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      {similarPhotos.map((photo) => {
+        // Sanitize similarity value before using it
+        const similarity = Number(photo.similarity);
+        
+        return (
+          <div 
+            key={photo._id} 
+            className="border rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow"
+          >
+            <img
+              src={photo.data}
+              alt={photo.name || "Similar face"}
+              className="w-full h-48 object-cover"
+              loading="lazy"
+            />
+            <div className="p-3">
+              <div className="flex justify-between items-center">
+                <span className="text-sm font-medium">Similarity</span>
+                <span className="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                  {isNaN(similarity) ? 'N/A' : similarity.toFixed(2) + '%'}
+                </span>
+              </div>
+              {photo.name && (
+                <div className="text-sm text-gray-600 mt-1">
+                  {photo.name}
                 </div>
               )}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  </div>
+)}
+
             </div>
           </div>
         </div>
