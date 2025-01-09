@@ -14,7 +14,7 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
 } from '@heroicons/react/24/solid';
-import { clientDecrypt, clientEncrypt } from '../utils/encryption';
+import { clientDecrypt, clientEncrypt } from '../utils/Encryption';
 
 const FolderPage = () => {
   const { folderId } = useParams();
