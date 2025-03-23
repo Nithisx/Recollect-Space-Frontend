@@ -115,40 +115,7 @@ const AboutUs = () => {
       </section>
 
 
-      {/* Mission Section */}
-      <section className="py-20">
-  <div className="container mx-auto px-6">
-    <div className="grid md:grid-cols-2 gap-12 items-center">
-      {/* Image Animation */}
-      <motion.div
-        initial={{ opacity: 0, y: 50, scale: 0.95 }}
-        whileInView={{ opacity: 1, y: 0, scale: 1 }}
-        transition={{ type: 'spring', stiffness: 100, delay: 0.3 }}
-      >
-        <img 
-          src={image2} 
-          alt="Mission" 
-          className="rounded-2xl shadow-xl w-full h-[500px] object-cover"
-        />
-      </motion.div>
-
-      {/* Text Animation */}
-      <motion.div
-        initial={{ opacity: 0, x: -100 }}
-        whileInView={{ opacity: 1, x: 0 }}
-        transition={{ type: 'spring', stiffness: 100, delay: 0.2 }}
-        className="space-y-6"
-      >
-        <h2 className="text-4xl font-bold">Our Mission</h2>
-        <p className="text-gray-600 text-lg">
-          At Recollect Space, our mission is to empower you to capture, organize, and share your most treasured moments—helped by the power of **AI**. 
-          We believe in creating a platform where memories are not just stored, but intelligently curated into meaningful stories. 
-          With AI-driven features like automatic photo tagging, personalized recommendations, and content suggestions, we make it easier than ever to relive and share your moments with the people who matter most.
-        </p>
-      </motion.div>
-    </div>
-  </div>
-      </section>
+      
 
       {/* How Recollect Space Works Section */}
       <section className="py-20 bg-white text-gray-900">
