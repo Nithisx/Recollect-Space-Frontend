@@ -53,26 +53,4 @@ Usage notes
 - Model files are loaded from [public/models](public/models); do not remove them unless you
   intend to reconfigure model loading in the code.
 
-Contributing
 
-- Open an issue or submit a pull request for bug fixes, feature requests, or improvements.
-- Add tests and keep changes minimal and focused.
-
-License
-
-- No license file included. Add a license (for example, MIT) in the project root if you plan
-  to open-source the project.
-
-Contact
-
-- For questions or help, update the README or open an issue in the repository.
-
-Next steps
-
-- Add a `LICENSE` file, examples for integrating third-party storage, and optional server-side
-  endpoints for user accounts and backups.
-
---
-This README was expanded to include usage, installation, and project details. If you want a
-shorter or more technical version (API examples, env vars, or deployment instructions), tell me
-which sections to add or remove.
